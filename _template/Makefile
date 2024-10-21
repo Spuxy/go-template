@@ -4,6 +4,8 @@ PWD = $(shell pwd)
 # constants
 DOCKER_REPO = {{.Base.appName}}
 DOCKER_TAG = latest
+BUILD_TARGET_ARCH = arm64
+BUILD_TARGET_OS = darwin
 
 all: git-hooks {{if .Extensions.grpc.base }}generate{{end}} tidy ## Initializes all tools
 
@@ -66,7 +68,11 @@ clean: ## Cleans up everything
 	@rm -rf bin out {{if .Extensions.grpc.base}}protodeps{{end}}
 
 docker: ## Builds docker image
-	docker buildx build --cache-to type=inline -t $(DOCKER_REPO):$(DOCKER_TAG) .
+	docker buildx build \
+		--cache-to type=inline \
+		-t $(DOCKER_REPO):$(DOCKER_TAG) \	
+		--platform $(BUILD_TARGET_OS),$(BUILD_TARGET_ARCH) \
+		.
 
 {{- if .Extensions.grpc.base }}
 # additional dependencies for grpc
