@@ -1,6 +1,8 @@
 SHELL=/bin/bash -e -o pipefail
 PWD = $(shell pwd)
 LINTER_VERSION = v1.55.1
+BUILD_TARGET_ARCH = arm64
+BUILD_TARGET_OS = darwin
 
 all: git-hooks generate ## Initializes all tools and files
 
@@ -12,7 +14,7 @@ test-build: ## Tests whether the code compiles
 
 build: out/bin ## Builds all binaries
 
-GO_BUILD = mkdir -pv "$(@)" && go build -ldflags="-w -s" -o "$(@)" ./...
+GO_BUILD = mkdir -pv "$(@)" && GOOS=$(BUILD_TARGET_OS) GOARCH=$(BUILD_TARGET_ARCH) go build -ldflags="-w -s" -o "$(@)" ./...
 .PHONY: out/bin
 out/bin:
 	$(GO_BUILD)
